@@ -1,19 +1,23 @@
 import * as fs from "fs";
 import path from "path";
 
-const moveTemplateSources = (templatePath, newPath, projectName) => {
+export default function moveTemplateSources(
+  templatePath,
+  newPath,
+  projectName
+) {
   const filesToCreate = fs.readdirSync(templatePath);
 
-  filesToCreate.forEach((file) => {
-    const origFilePath = path.join(templatePath, file);
+  filesToCreate.forEach(async (file) => {
+    const originalFilePath = path.join(templatePath, file);
 
     // get stats about the current file
-    const stats = fs.statSync(origFilePath);
+    const stats = fs.statSync(originalFilePath);
 
     if (stats.isFile()) {
-      let contents = fs.readFileSync(origFilePath, "utf8");
+      let contents = await Bun.file(originalFilePath).text();
 
-      // Rename
+      // Rename & Restructure
       if (file === ".npmignore") file = ".gitignore";
       if (file === "package.json" && projectName !== "") {
         let packageJson = JSON.parse(contents);
@@ -22,7 +26,7 @@ const moveTemplateSources = (templatePath, newPath, projectName) => {
       }
 
       const writePath = path.join(newPath, file);
-      fs.writeFileSync(writePath, contents, "utf8");
+      await Bun.write(writePath, contents);
     } else if (stats.isDirectory()) {
       fs.mkdirSync(path.join(newPath, file));
 
@@ -34,6 +38,4 @@ const moveTemplateSources = (templatePath, newPath, projectName) => {
       );
     }
   });
-};
-
-export default moveTemplateSources;
+}

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 import inquirer from "inquirer";
 import path from "path";
 import { fileURLToPath } from "url";
