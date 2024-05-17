@@ -3,12 +3,12 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/inquirer": "^9.0.7",
+    "inquirer": "^9.2.21"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
-  "dependencies": {
-    "@types/chrome": "^0.0.268"
-  }
+  "bin": "index.js"
 }
