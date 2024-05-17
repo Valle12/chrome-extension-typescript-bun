@@ -58,7 +58,7 @@ export class Watcher {
   }
 
   private async buildTypescriptFiles(filename: string) {
-    const build = await Bun.build({
+    await Bun.build({
       entrypoints: [filename],
       minify: true,
       outdir: path.join(this.dir, this.outdir, path.dirname(filename)),
