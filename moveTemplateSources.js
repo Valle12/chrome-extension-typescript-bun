@@ -1,14 +1,10 @@
 import * as fs from "fs";
-import path from "path";
 
-const dir = process.cwd();
-const templatePath = path.join(dir, "template");
-
-const moveTemplateSources = (projectPath, projectName) => {
+const moveTemplateSources = (templatePath, newPath, projectName) => {
   const filesToCreate = fs.readdirSync(templatePath);
 
   filesToCreate.forEach((file) => {
-    const origFilePath = path.join(templatePath, file);
+    const origFilePath = `${templatePath}/${file}`;
 
     // get stats about the current file
     const stats = fs.statSync(origFilePath);
@@ -19,16 +15,13 @@ const moveTemplateSources = (projectPath, projectName) => {
       // Rename
       if (file === ".npmignore") file = ".gitignore";
 
-      const writePath = path.join(projectPath, file);
+      const writePath = `${newPath}/${file}`;
       fs.writeFileSync(writePath, contents, "utf8");
     } else if (stats.isDirectory()) {
-      fs.mkdirSync(path.join(projectPath, path.basename(file)));
+      fs.mkdirSync(`${newPath}/${file}`);
 
       // recursive call
-      moveTemplateSources(
-        path.join(templatePath, file),
-        path.join(projectPath, file)
-      );
+      moveTemplateSources(`${templatePath}/${file}`, `${newPath}/${file}`, "");
     }
   });
 };

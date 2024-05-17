@@ -1,51 +1,28 @@
 #!/usr/bin/env node
-import inquirer from "inquirer";
-import { lstat, mkdir } from "fs/promises";
-import path from "path";
-import moveTemplateSources from "./moveTemplateSources";
 
-const workingDir = process.cwd();
-let projectPath = null;
+import inquirer from "inquirer";
+import * as fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import moveTemplateSources from "./moveTemplateSources.js";
+const dir = process.cwd();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const questions = [
   {
-    type: "input",
-    name: "projectPath",
-    message: "Project folder:",
-    default: workingDir,
-    async validate(value) {
-      if (value.startsWith("./") || value.startsWith("../")) {
-        projectPath = path.join(workingDir, value);
-        return true;
-      }
-      const errorMessage = "You must provide a path to a valid directory";
-      try {
-        const result = await lstat(value);
-        if (result.isDirectory()) return true;
-        return errorMessage;
-      } catch (e) {
-        return errorMessage;
-      }
-    },
-  },
-  {
-    type: "input",
     name: "projectName",
+    type: "input",
     message: "Project name:",
-    validate(value) {
-      if (!value || value.length == 0) return "You need to enter a name";
-      return true;
+    validate: function (input) {
+      if (/^([A-Za-z\-\\_\d])+$/.test(input)) return true;
+      else
+        return "Project name may only include letters, numbers, underscores and hashes.";
     },
   },
 ];
 
-const results = await inquirer.prompt(questions);
+const answers = await inquirer.prompt(questions);
+const projectName = answers["projectName"];
+const templatePath = path.join(__dirname, "template");
 
-if (projectPath == null) {
-  projectPath = results["projectPath"];
-} else {
-  await mkdir(projectPath, { recursive: true });
-}
-
-const projectName = results["projectName"];
-moveTemplateSources(projectPath, projectName);
+moveTemplateSources(templatePath, dir, projectName);
