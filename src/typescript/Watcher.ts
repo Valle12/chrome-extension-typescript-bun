@@ -1,4 +1,4 @@
-import { watch } from "fs/promises";
+import { watch, readdir, rm } from "fs/promises";
 import * as path from "path";
 
 export class Watcher {
@@ -7,7 +7,38 @@ export class Watcher {
   time = new Date().getTime();
 
   constructor() {
+    process.stdout.write("\x1Bc"); // Clears the Bun console
+    this.buildAllTypescriptFiles();
     this.watch();
+  }
+
+  private async buildAllTypescriptFiles() {
+    rm(path.join(this.dir, "dist"), { recursive: true });
+
+    const dirContent = await readdir(this.dir, {
+      recursive: true,
+      withFileTypes: true,
+    });
+
+    const entrypoints = dirContent
+      .filter(
+        (file) =>
+          file.isFile() &&
+          !file.name.includes("node_modules") &&
+          path.extname(file.name) === ".ts" &&
+          !file.name.includes("index.ts") &&
+          !file.name.includes("watcher.ts")
+      )
+      .map((file) => file.name);
+
+    for (const entrypoint of entrypoints) {
+      await Bun.build({
+        entrypoints: [entrypoint],
+        minify: true,
+        sourcemap: "inline",
+        outdir: path.join(this.dir, "dist", path.dirname(entrypoint)),
+      });
+    }
   }
 
   private async watch() {
@@ -16,7 +47,6 @@ export class Watcher {
       const now = new Date().getTime();
       if (now - this.time <= this.interval) continue;
       this.time = now;
-      process.stdout.write("\x1Bc"); // Clears the Bun console
       if (event.filename != null && path.extname(event.filename) === ".ts")
         this.buildTypescriptFiles(event.filename);
     }
