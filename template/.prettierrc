@@ -1,4 +1,0 @@
-{
-    "arrowParens": "avoid",
-    "filepath": "./node_modules/prettier"
-}
