@@ -1,7 +1,5 @@
 #!/usr/bin/env node
-
 import inquirer from "inquirer";
-import * as fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import moveTemplateSources from "./moveTemplateSources.js";
