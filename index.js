@@ -1,23 +1,23 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 import inquirer from "inquirer";
-import * as path from "path";
 import { lstat, mkdir } from "fs/promises";
+import path from "path";
+import moveTemplateSources from "./moveTemplateSources";
 
 const workingDir = process.cwd();
+let projectPath = null;
 
 const questions = [
   {
     type: "input",
-    name: "path",
+    name: "projectPath",
     message: "Project folder:",
     default: workingDir,
     async validate(value) {
       if (value.startsWith("./") || value.startsWith("../")) {
-        const dir = path.join(workingDir, value);
-        await mkdir(dir, { recursive: true });
+        projectPath = path.join(workingDir, value);
         return true;
       }
-
       const errorMessage = "You must provide a path to a valid directory";
       try {
         const result = await lstat(value);
@@ -28,7 +28,24 @@ const questions = [
       }
     },
   },
+  {
+    type: "input",
+    name: "projectName",
+    message: "Project name:",
+    validate(value) {
+      if (!value || value.length == 0) return "You need to enter a name";
+      return true;
+    },
+  },
 ];
 
 const results = await inquirer.prompt(questions);
-console.log(results);
+
+if (projectPath == null) {
+  projectPath = results["projectPath"];
+} else {
+  await mkdir(projectPath, { recursive: true });
+}
+
+const projectName = results["projectName"];
+moveTemplateSources(projectPath, projectName);
