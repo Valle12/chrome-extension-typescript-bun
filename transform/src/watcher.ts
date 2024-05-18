@@ -6,7 +6,7 @@ export class Watcher {
   interval = 100;
   time = new Date().getTime();
   outdir = "dist";
-  excludedFiles = ["index.ts", "watcher.ts"];
+  excludedFiles = ["index.ts", "watcher.ts", "manifest.config.ts"];
 
   constructor() {
     process.stdout.write("\x1Bc"); // Clears the Bun console
@@ -24,13 +24,13 @@ export class Watcher {
 
     const entrypoints = dirContent
       .filter(
-        (file) =>
+        file =>
           file.isFile() &&
           !file.name.includes("node_modules") &&
           path.extname(file.name) === ".ts" &&
           !this.excludedFiles.includes(path.basename(file.name))
       )
-      .map((file) => file.name);
+      .map(file => file.name);
 
     for (const entrypoint of entrypoints) {
       await Bun.build({

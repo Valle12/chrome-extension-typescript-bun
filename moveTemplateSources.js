@@ -8,7 +8,7 @@ export default function moveTemplateSources(
 ) {
   const filesToCreate = fs.readdirSync(templatePath);
 
-  filesToCreate.forEach(async (file) => {
+  filesToCreate.forEach(async file => {
     const originalFilePath = path.join(templatePath, file);
 
     // get stats about the current file
@@ -23,6 +23,10 @@ export default function moveTemplateSources(
         let packageJson = JSON.parse(contents);
         packageJson["name"] = projectName;
         contents = JSON.stringify(packageJson, null, 2);
+      }
+      if (file === "manifest.config.ts" && projectName !== "") {
+        console.log("manifest");
+        contents = contents.replace("replace", projectName);
       }
 
       const writePath = path.join(newPath, file);

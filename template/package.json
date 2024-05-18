@@ -1,9 +1,11 @@
 {
   "name": "template",
+  "version": "0.0.1",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "chrome-extension-bun-plugin": "link:chrome-extension-bun-plugin"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
