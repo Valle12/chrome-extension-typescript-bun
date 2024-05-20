@@ -1,4 +1,4 @@
-import type { ManifestRead } from "../transform/src/types";
+import type { ManifestRead } from "chrome-extension-bun-plugin/src/types";
 
 const manifestRead: ManifestRead = {
   name: "replace",
