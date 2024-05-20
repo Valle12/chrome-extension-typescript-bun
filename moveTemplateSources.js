@@ -24,10 +24,8 @@ export default function moveTemplateSources(
         packageJson["name"] = projectName;
         contents = JSON.stringify(packageJson, null, 2);
       }
-      if (file === "manifest.config.ts" && projectName !== "") {
-        console.log("manifest");
+      if (file === "manifest.config.ts" && projectName !== "")
         contents = contents.replace("replace", projectName);
-      }
 
       const writePath = path.join(newPath, file);
       await Bun.write(writePath, contents);
