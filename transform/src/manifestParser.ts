@@ -1,7 +1,6 @@
-import packageJson from "../../template/package.json";
-import type { ContentScript, ManifestRead, ManifestWrite } from "./types";
+import packageJson from "../../package.json";
+import type { ManifestWrite } from "./types";
 import { rm } from "fs/promises";
-console.log(Bun.env.MANIFEST);
 const { manifestRead } = await import(Bun.env.MANIFEST);
 const { version } = packageJson;
 
